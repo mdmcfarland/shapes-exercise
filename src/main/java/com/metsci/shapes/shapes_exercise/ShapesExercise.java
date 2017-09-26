@@ -56,6 +56,8 @@ import com.metsci.shapes.DraggablesInputListener;
 import com.metsci.shapes.ShapesLayer;
 import com.metsci.shapes.ShapesModel;
 import com.metsci.shapes.ShapesPainter;
+import com.metsci.shapes.shapes_exercise.rectangle.CustomRectangle;
+import com.metsci.shapes.shapes_exercise.rectangle.CustomRectanglePainter;
 import com.metsci.shapes.xy.Box;
 import com.metsci.shapes.xy.polygon.Polygon;
 import com.metsci.shapes.xy.polygon.PolygonPainter;
@@ -284,9 +286,9 @@ public class ShapesExercise implements GlimpseLayoutProvider{
         
         // add a rectangle
         ShapesModel model = new ShapesModel( );
-        putShape( model, "R", new Rectangle( new Box( 2.0, 100.0, 100.0, 0.0, 1.0, 200.0 ) ) );
+        putShape( model, "R", new CustomRectangle( new Box( 2.0, 100.0, 100.0, 0.0, 1.0, 200.0 ), 0.3) );
         ShapesPainter shapesPainter = new ShapesPainter( model );
-        shapesPainter.register( 0, Rectangle.class, new CustomRectanglePainter( ) );
+        shapesPainter.register( 0, CustomRectangle.class, new CustomRectanglePainter( ) );
         plot.addPainter(shapesPainter);
         
         // make it draggable

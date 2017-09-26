@@ -1,4 +1,4 @@
-package com.metsci.shapes.shapes_exercise;
+package com.metsci.shapes.shapes_exercise.rectangle;
 
 import static com.metsci.glimpse.gl.util.GLUtils.disableBlending;
 import static com.metsci.glimpse.gl.util.GLUtils.enableStandardBlending;
@@ -9,6 +9,8 @@ import static com.metsci.shapes.StandardShapeFlag.ALLOWS_MODIFY;
 import static com.metsci.shapes.StandardShapeFlag.ALLOWS_RESIZE;
 import static com.metsci.shapes.StandardShapeFlag.ALLOWS_ROTATE;
 
+import java.util.logging.Logger;
+
 import javax.media.opengl.GL2ES2;
 
 import com.metsci.glimpse.context.GlimpseContext;
@@ -18,10 +20,10 @@ import com.metsci.shapes.ShapeControl;
 import com.metsci.shapes.ShapePainter;
 import com.metsci.shapes.ShapePainterHelper;
 import com.metsci.shapes.ShapeTheme;
-import com.metsci.shapes.xy.rectangle.Rectangle;
 
 public class CustomRectanglePainter implements ShapePainter
 {
+	private static final Logger LOGGER = Logger.getLogger(CustomRectanglePainter.class.getName());
 
     protected final ShapeTheme theme;
     protected final ShapePainterHelper helper;
@@ -41,7 +43,7 @@ public class CustomRectanglePainter implements ShapePainter
     @Override
     public void paintShape( GlimpseContext context, Object key, Shape shape, ShapeControl hoveredControl, ShapeControl selectedControl )
     {
-        Rectangle s = ( Rectangle ) shape;
+        CustomRectangle s = ( CustomRectangle ) shape;
         boolean hovered = ( hoveredControl != null );
         boolean selected = ( selectedControl != null );
         
@@ -51,19 +53,14 @@ public class CustomRectanglePainter implements ShapePainter
         DrawStyle shapeStyle = ( hovered ? this.theme.hoveredStyle : this.theme.normalStyle );
         this.helper.drawBox( context, shapeStyle, s.box );
 
-        // find the location 30% of the way from the top-left to the bottom-right corner
-        float topLeftX = (float) s.box.xC;
-        float bottomRightX = (float) s.box.xB;
-        float topLeftY = (float) s.box.yC;
-        float bottomRightY = (float) s.box.yB;
-        float x = (float) (topLeftX + .3 * (bottomRightX - topLeftX));
-        float y = (float)(topLeftY + .3 * (bottomRightY - topLeftY));
-
-        // draw a line from each corner to that point
-        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xA, s.box.yA, x, y);
-        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xB, s.box.yB, x, y);
-        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xC, s.box.yC, x, y);
-        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xD, s.box.yD, x, y);
+        // draw a line from each corner to the customRect's interior location
+        float interiorX = (float) s.getInteriorX();
+        float interiorY = (float) s.getInteriorY();
+        LOGGER.finest("drawing lines to interor point:  " + interiorX + "," + interiorY);
+        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xA, s.box.yA, interiorX, interiorY);
+        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xB, s.box.yB, interiorX, interiorY);
+        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xC, s.box.yC, interiorX, interiorY);
+        this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xD, s.box.yD, interiorX, interiorY);
         
         if ( selected )
         {
