@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.metsci</groupId>
+		<artifactId>parent</artifactId>
+		<version>18</version>
+	</parent>
+
+	<groupId>com.metsci.shapes</groupId>
+	<artifactId>shapes-exercise</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Metron, Inc. Basic Project</name>
+	<url>http://www.metsci.com</url>
+
+	<properties>
+		<env>default</env>
+		<glimpse.version>3.2.0-rc6</glimpse.version>
+		<util.version>0.22.0</util.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.metsci.glimpse</groupId>
+			<artifactId>glimpse-core</artifactId>
+			<version>${glimpse.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.metsci.util</groupId>
+			<artifactId>metsci-util-core</artifactId>
+			<version>${util.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.metsci.shapes</groupId>
+			<artifactId>shapes-core</artifactId>
+			<version>CURRENT-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
