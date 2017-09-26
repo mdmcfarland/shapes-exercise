@@ -286,7 +286,7 @@ public class ShapesExercise implements GlimpseLayoutProvider{
         ShapesModel model = new ShapesModel( );
         putShape( model, "R", new Rectangle( new Box( 2.0, 100.0, 100.0, 0.0, 1.0, 200.0 ) ) );
         ShapesPainter shapesPainter = new ShapesPainter( model );
-        shapesPainter.register( 0, Rectangle.class, new RectanglePainter( ) );
+        shapesPainter.register( 0, Rectangle.class, new CustomRectanglePainter( ) );
         plot.addPainter(shapesPainter);
         
         // make it draggable

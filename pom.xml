@@ -20,6 +20,7 @@
 		<env>default</env>
 		<glimpse.version>3.2.0-rc6</glimpse.version>
 		<util.version>0.22.0</util.version>
+		<shapes.version>0.1.2</shapes.version>
 	</properties>
 
 	<dependencies>
@@ -44,7 +45,7 @@
 		<dependency>
 			<groupId>com.metsci.shapes</groupId>
 			<artifactId>shapes-core</artifactId>
-			<version>CURRENT-SNAPSHOT</version>
+			<version>${shapes.version}</version>
 		</dependency>
 	</dependencies>
 </project>
