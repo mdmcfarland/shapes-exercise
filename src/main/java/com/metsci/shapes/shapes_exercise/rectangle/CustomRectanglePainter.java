@@ -9,6 +9,7 @@ import static com.metsci.shapes.StandardShapeFlag.ALLOWS_MODIFY;
 import static com.metsci.shapes.StandardShapeFlag.ALLOWS_RESIZE;
 import static com.metsci.shapes.StandardShapeFlag.ALLOWS_ROTATE;
 
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.media.opengl.GL2ES2;
@@ -43,7 +44,7 @@ public class CustomRectanglePainter implements ShapePainter
     @Override
     public void paintShape( GlimpseContext context, Object key, Shape shape, ShapeControl hoveredControl, ShapeControl selectedControl )
     {
-        CustomRectangle s = ( CustomRectangle ) shape;
+        MyRectangle s = ( MyRectangle ) shape;
         boolean hovered = ( hoveredControl != null );
         boolean selected = ( selectedControl != null );
         
@@ -53,10 +54,18 @@ public class CustomRectanglePainter implements ShapePainter
         DrawStyle shapeStyle = ( hovered ? this.theme.hoveredStyle : this.theme.normalStyle );
         this.helper.drawBox( context, shapeStyle, s.box );
 
-        // draw a line from each corner to the customRect's interior location
+        // draw a line from each corner to the rectangle's interior location
         float interiorX = (float) s.getInteriorX();
         float interiorY = (float) s.getInteriorY();
-        LOGGER.finest("drawing lines to interor point:  " + interiorX + "," + interiorY);
+
+        // mark the interior location
+        this.helper.drawCircle_PX(context, theme.knobStyle, interiorX, interiorY, 10);
+
+        // ocasionally log where the interiorPt has moved
+        if (new Random().nextInt(100) == 0) {
+            LOGGER.info("drawing lines to interor point:  " + interiorX + "," + interiorY);
+        }
+        
         this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xA, s.box.yA, interiorX, interiorY);
         this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xB, s.box.yB, interiorX, interiorY);
         this.helper.lineStrip(context, shapeStyle.outlineThickness_PX, shapeStyle.outlineColor, (float)s.box.xC, s.box.yC, interiorX, interiorY);

@@ -21,8 +21,11 @@ import static com.metsci.shapes.xy.BoxUtils.boxTranslated;
 import static com.metsci.shapes.xy.BoxUtils.xCorner;
 import static com.metsci.shapes.xy.BoxUtils.yCorner;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableSet;
 import com.metsci.shapes.BoundingBox;
@@ -35,29 +38,84 @@ import com.metsci.shapes.xy.BoxCornerKey;
 
 public class MyRectangle implements Shape
 {
+    private static final Logger LOGGER = Logger.getLogger(MyRectangle.class.getName());
+    
+    NumberFormat df = DecimalFormat.getNumberInstance();
+
     public static final ImmutableSet<? extends ShapeFlag> defaultFlags = ImmutableSet.of( ALLOWS_SELECT, ALLOWS_MODIFY, ALLOWS_TRANSLATE, ALLOWS_RESIZE, ALLOWS_ROTATE );
 
+    private static final double DEFAULT_INTERIOR_PCT = 0.5;
+    
+    private double interiorX;
+    private double interiorY;
 
     public final Box box;
     public final ImmutableSet<ShapeFlag> flags;
 
-
     public MyRectangle( Box box )
     {
-        this( box, defaultFlags );
+        this(box, DEFAULT_INTERIOR_PCT);
+    }
+
+
+    public MyRectangle( Box box, double percentage)
+    {
+        this( box, defaultFlags, percentage );
     }
 
     public MyRectangle( Box box, Collection<? extends ShapeFlag> flags )
     {
-        this.box = box;
-        this.flags = ImmutableSet.copyOf( flags );
+        this(box, flags, DEFAULT_INTERIOR_PCT);
     }
 
-    public MyRectangle withBox( Box box )
+    public MyRectangle( Box box, Collection<? extends ShapeFlag> flags, double interiorX, double interiorY )
+    {
+        this.box = box;
+        this.flags = ImmutableSet.copyOf( flags );
+        setInteriorPoint(interiorX, interiorY);
+    }
+    
+
+    public MyRectangle( Box box, Collection<? extends ShapeFlag> flags, double percentage )
+    {
+        this.box = box;
+        this.flags = ImmutableSet.copyOf( flags );
+        setInteriorPoint(percentage);
+    }
+
+    public MyRectangle withBox( Box box)
     {
         return new MyRectangle( box, this.flags );
     }
+    
+    public MyRectangle withInteriorPoint(double interiorX, double interiorY) {
+        LOGGER.info("withInteriorPoint(" + df.format(interiorX) + "," + df.format(interiorY));
+        return new MyRectangle( this.box, this.flags, interiorX, interiorY);
+    }
+    
+    public double getInteriorX() {
+        return interiorX;
+    }
 
+    public double getInteriorY() {
+        return interiorY;
+    }
+
+    /**
+     * Set the interior point to be N percent of the distance
+     *    from the top-left corner to the bottom-right corner
+     * @param percentage
+     */
+    public void setInteriorPoint(double percentage) {
+        setInteriorPoint(box.xC + percentage * (box.xB-box.xC), box.yC + percentage * (box.yB - box.yC));
+    }
+    
+    public void setInteriorPoint(double x, double y) {
+        this.interiorX = x;
+        this.interiorY = y;
+        LOGGER.warning("interior=" + df.format(x) + "," + df.format(y));
+    }
+    
     @Override
     public ImmutableSet<? extends ShapeFlag> flags( )
     {
@@ -85,6 +143,12 @@ public class MyRectangle implements Shape
     @Override
     public ShapeControl getControlAt( boolean selected, DraggablesMouseEvent ev )
     {
+        // if mouse is near the interior point, return an appropriate control
+        double interiorDist = distance_PX( interiorX, interiorY, ev);
+        if (distance_PX( interiorX, interiorY, ev) <= knobHitRadius_PX) {
+            return this.createInteriorPointMover();
+        }
+        
         if ( this.flags.contains( ALLOWS_MODIFY ) && selected && this.flags.contains( ALLOWS_RESIZE ) )
         {
             for ( BoxCornerKey cornerKey : BoxCornerKey.values( ) )
@@ -160,6 +224,13 @@ public class MyRectangle implements Shape
         return false;
     }
 
+    public ShapeControl createInteriorPointMover() {
+        return simpleMouseControl(MyRectangle.class, ( s, ev ) ->
+        {
+            return s.withInteriorPoint(ev.x, ev.y);
+        } );
+    }
+    
     public ShapeControl createResizer( BoxCornerKey cornerKey, double xAxisOffset, double yAxisOffset, double xPixelOffset, double yPixelOffset )
     {
         return simpleMouseControl( MyRectangle.class, ( s, ev ) ->

@@ -1,34 +1,16 @@
 package com.metsci.shapes.shapes_exercise;
 
 import static com.metsci.glimpse.axis.tagged.Tag.TEX_COORD_ATTR;
-import static com.metsci.glimpse.support.DisposableUtils.addToGLAnimator;
-import static com.metsci.glimpse.support.DisposableUtils.onWindowClosing;
-import static com.metsci.glimpse.support.FrameUtils.newFrame;
-import static com.metsci.glimpse.support.FrameUtils.showFrameCentered;
 import static com.metsci.shapes.ShapesModelUtils.putShape;
-import static java.awt.BorderLayout.CENTER;
-import static javax.media.opengl.GLProfile.GL3;
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
-import java.awt.BorderLayout;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import javax.media.opengl.GLAnimatorControl;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLProfile;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import com.jogamp.newt.opengl.GLWindow;
-import com.metsci.glimpse.axis.Axis2D;
 import com.metsci.glimpse.axis.listener.mouse.AxisMouseListener;
 import com.metsci.glimpse.axis.listener.mouse.AxisMouseListener2D;
-import com.metsci.glimpse.axis.painter.NumericXYAxisPainter;
 import com.metsci.glimpse.axis.painter.label.GridAxisLabelHandler;
 import com.metsci.glimpse.axis.tagged.TaggedAxis1D;
 import com.metsci.glimpse.axis.tagged.TaggedAxisMouseListener1D;
@@ -38,31 +20,21 @@ import com.metsci.glimpse.gl.texture.ColorTexture1D.MutatorColor1D;
 import com.metsci.glimpse.gl.texture.FloatTexture1D;
 import com.metsci.glimpse.gl.texture.FloatTexture1D.MutatorFloat1D;
 import com.metsci.glimpse.layout.GlimpseAxisLayout2D;
-import com.metsci.glimpse.layout.GlimpseLayout;
 import com.metsci.glimpse.layout.GlimpseLayoutProvider;
-import com.metsci.glimpse.painter.decoration.BackgroundPainter;
 import com.metsci.glimpse.painter.decoration.BorderPainter;
 import com.metsci.glimpse.painter.decoration.GridPainter;
 import com.metsci.glimpse.painter.shape.TaggedShadedPointPainter;
 import com.metsci.glimpse.plot.MultiAxisPlot2D;
 import com.metsci.glimpse.plot.MultiAxisPlot2D.AxisInfo;
-import com.metsci.glimpse.support.color.GlimpseColor;
 import com.metsci.glimpse.support.colormap.ColorGradient;
 import com.metsci.glimpse.support.colormap.ColorGradients;
-import com.metsci.glimpse.support.settings.DefaultLookAndFeel;
-import com.metsci.glimpse.support.swing.NewtSwingEDTGlimpseCanvas;
-import com.metsci.glimpse.support.swing.SwingEDTAnimator;
 import com.metsci.shapes.DraggablesInputListener;
 import com.metsci.shapes.ShapesLayer;
 import com.metsci.shapes.ShapesModel;
 import com.metsci.shapes.ShapesPainter;
-import com.metsci.shapes.shapes_exercise.rectangle.CustomRectangle;
 import com.metsci.shapes.shapes_exercise.rectangle.CustomRectanglePainter;
+import com.metsci.shapes.shapes_exercise.rectangle.MyRectangle;
 import com.metsci.shapes.xy.Box;
-import com.metsci.shapes.xy.polygon.Polygon;
-import com.metsci.shapes.xy.polygon.PolygonPainter;
-import com.metsci.shapes.xy.rectangle.Rectangle;
-import com.metsci.shapes.xy.rectangle.RectanglePainter;
 
 public class ShapesExercise implements GlimpseLayoutProvider{
     public static int NUM_POINTS = 1000000;
@@ -286,9 +258,9 @@ public class ShapesExercise implements GlimpseLayoutProvider{
         
         // add a rectangle
         ShapesModel model = new ShapesModel( );
-        putShape( model, "R", new CustomRectangle( new Box( 2.0, 100.0, 100.0, 0.0, 1.0, 200.0 ), 0.3) );
+        putShape( model, "R", new MyRectangle( new Box( 2.0, 100.0, 100.0, 0.0, 1.0, 200.0 ), 0.3) );
         ShapesPainter shapesPainter = new ShapesPainter( model );
-        shapesPainter.register( 0, CustomRectangle.class, new CustomRectanglePainter( ) );
+        shapesPainter.register( 0, MyRectangle.class, new CustomRectanglePainter( ) );
         plot.addPainter(shapesPainter);
         
         // make it draggable
