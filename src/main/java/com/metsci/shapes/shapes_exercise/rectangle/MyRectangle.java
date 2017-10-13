@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableSet;
+import com.metsci.glimpse.util.Pair;
 import com.metsci.shapes.BoundingBox;
 import com.metsci.shapes.DraggablesMouseEvent;
 import com.metsci.shapes.Shape;
@@ -46,8 +47,8 @@ public class MyRectangle implements Shape
 
     private static final double DEFAULT_INTERIOR_PCT = 0.5;
     
-    private double interiorX;
-    private double interiorY;
+    public final double interiorX;
+    public final double interiorY;
 
     public final Box box;
     public final ImmutableSet<ShapeFlag> flags;
@@ -72,7 +73,8 @@ public class MyRectangle implements Shape
     {
         this.box = box;
         this.flags = ImmutableSet.copyOf( flags );
-        setInteriorPoint(interiorX, interiorY);
+        this.interiorX = interiorX;
+        this.interiorY = interiorY;
     }
     
 
@@ -80,7 +82,10 @@ public class MyRectangle implements Shape
     {
         this.box = box;
         this.flags = ImmutableSet.copyOf( flags );
-        setInteriorPoint(percentage);
+        
+        Pair<Double,Double> p = getInteriorPoint( percentage );
+        this.interiorX = p.first( );
+        this.interiorY = p.second( );
     }
 
     public MyRectangle withBox( Box box)
@@ -102,18 +107,13 @@ public class MyRectangle implements Shape
     }
 
     /**
-     * Set the interior point to be N percent of the distance
+     * Identify and return the interior point which is N percent of the distance
      *    from the top-left corner to the bottom-right corner
-     * @param percentage
-     */
-    public void setInteriorPoint(double percentage) {
-        setInteriorPoint(box.xC + percentage * (box.xB-box.xC), box.yC + percentage * (box.yB - box.yC));
-    }
-    
-    public void setInteriorPoint(double x, double y) {
-        this.interiorX = x;
-        this.interiorY = y;
-        LOGGER.warning("interior=" + df.format(x) + "," + df.format(y));
+    */
+    public Pair<Double,Double> getInteriorPoint(double percentage) {
+        double x = box.xC + percentage * (box.xB-box.xC);
+        double y = box.yC + percentage * (box.yB - box.yC);
+        return new Pair<Double,Double>(x, y);
     }
     
     @Override
